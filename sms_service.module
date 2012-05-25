@@ -1,0 +1,125 @@
+<?php
+
+/**
+ * @file
+ * Implements sms and email checkboxes in user profile and in
+ * user edit form to save changes.
+ */
+
+ module_load_include('inc', 'sms_service', 'sms_service');
+
+/**
+ * Implements hook_user_view().
+ */
+function sms_service_user_view($account) {
+
+  $info = sms_service_get_patron();
+
+  // SMS default checked ?
+  if (isset($info->messages[0]) && $info->messages[0]['value'] == 'sms' || isset($info->messages[1]) && $info->messages[1]['value'] == 'sms') {
+    $sms = 'checked="checked"';
+  }
+  else {
+    $sms = '';
+  }
+
+  // Email default checked ?
+  if (isset($info->messages[0]) && $info->messages[0]['value'] == 'email' || isset($info->messages[1]) && $info->messages[1]['value'] == 'email') {
+    $email = 'checked="checked"';
+  }
+  else {
+    $email = '';
+  }
+
+  // Add sms checkbox.
+  $account->content['alma_user_sms'] = array(
+    '#title' => t('SMS Påmindelser'),
+    '#type' => 'item',
+    '#markup' => '<input type="checkbox" ' . $sms . ' class="form-checkbox" disabled=TRUE > Pris 3kr. pr. stk (Regning overføres automatisk til Lånerstatus).',
+    '#weight' => 10,
+  );
+
+  // Add email checkbox.
+  $account->content['alma_user_email'] = array(
+    '#title' => t('Email Påmindelser.'),
+    '#type' => 'item',
+    '#markup' => '<input type="checkbox" ' . $email . ' class="form-checkbox" disabled=TRUE > Pris 3kr. pr. stk (Regning overføres automatisk til Lånerstatus).',
+    '#weight' => 11,
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function sms_service_form_user_profile_form_alter(&$form, &$form_state) {
+
+  $info = sms_service_get_patron();
+
+  // SMS default checked ?
+  if (isset($info->messages[0]) && $info->messages[0]['value'] == 'sms' || isset($info->messages[1]) && $info->messages[1]['value'] == 'sms') {
+    $sms = '1';
+  }
+  else {
+    $sms = '0';
+  }
+
+  // Email default checked ?
+  if (isset($info->messages[0]) && $info->messages[0]['value'] == 'email' || isset($info->messages[1]) && $info->messages[1]['value'] == 'email') {
+    $email = '1';
+  }
+  else {
+    $email = '0';
+  }
+
+  // Add sms checkbox.
+  $form['alma_user_sms'] = array(
+    '#prefix' => 'Ved at sætte et hak nedenunder acceptere du samtidig vores <a href="/paamindelsesservice" target="_blank">betingelser</a></p>',
+    '#title' => t('SMS Påmindelser, Pris 3kr. pr. stk (Regning overføres automatisk til Lånerstatus.'),
+    '#type' => 'checkbox',
+    '#return_value' => '1',
+    '#default_value' => $sms,
+    '#weight' => -2,
+  );
+
+  // Add email checkbox.
+  $form['alma_user_email'] = array(
+    '#title' => t('Email Påmindelser, Pris 3kr. pr. stk (Regning overføres automatisk til Lånerstatus.'),
+    '#type' => 'checkbox',
+    '#return_value' => '1',
+    '#default_value' => $email,
+    '#weight' => -1,
+  );
+  // Additional handler to submit changes to alma.
+  $form['#submit'][] = 'sms_service_user_profile_submit';
+}
+
+/**
+ * Additional handler for user_profile submit to
+ * save checkbox settings via alma.
+ */
+function sms_service_user_profile_submit($form, &$form_state) {
+  $creds = ding_user_get_creds();
+
+  if ($form_state['values']['alma_user_sms']['return_value'] == '1') {
+
+    // Add a due date alerts as SMS service per default.
+    alma_client_invoke('add_message_service', $creds['name'], $creds['pass'], ALMA_SERVICE_METHOD_SMS, ALMA_SERVICE_TYPE_DUE_DATE_ALERT);
+  }
+  // Also remove SMS messaging service.
+  else {
+
+    alma_client_invoke('remove_message_service', $creds['name'], $creds['pass'], ALMA_SERVICE_METHOD_SMS, ALMA_SERVICE_TYPE_DUE_DATE_ALERT);
+  }
+
+  // Also add email messaging service.
+  if ($form_state['values']['alma_user_email']['return_value'] == '1') {
+
+    // Add a due date alerts as email service per default.
+    alma_client_invoke('add_message_service', $creds['name'], $creds['pass'], ALMA_SERVICE_METHOD_EMAIL, ALMA_SERVICE_TYPE_DUE_DATE_ALERT);
+  }
+  // Also remove email messaging service.
+  else {
+
+    alma_client_invoke('remove_message_service', $creds['name'], $creds['pass'], ALMA_SERVICE_METHOD_EMAIL, ALMA_SERVICE_TYPE_DUE_DATE_ALERT);
+  }
+}
