@@ -3,7 +3,6 @@
 /**
  * @file
  * Implements missing alma for checking status on which alerts the user is registered to.
- * 
  */
 
 /**
