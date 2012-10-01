@@ -91,7 +91,11 @@ function sms_service_get_patron($creds = NULL, $reset = FALSE, $as_array = FALSE
   if (is_null($creds)) {
     // Get creds, which may throw an exception that login is required.
     global $user;
-    $creds = ding_user_get_creds($user);
+    try {
+      $creds = ding_user_get_creds($user);
+    } catch (DingProviderAuthException $e) {
+      return NULL;
+    }
   }
 
   static $patron;

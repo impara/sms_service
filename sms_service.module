@@ -14,6 +14,9 @@
 function sms_service_user_view($account) {
 
   $info = sms_service_get_patron();
+  if (is_null($info)) {
+    return;
+  }
 
   // SMS default checked ?
   if (isset($info->messages[0]) && $info->messages[0]['value'] == 'sms' || isset($info->messages[1]) && $info->messages[1]['value'] == 'sms') {
@@ -54,6 +57,9 @@ function sms_service_user_view($account) {
 function sms_service_form_user_profile_form_alter(&$form, &$form_state) {
 
   $info = sms_service_get_patron();
+  if (is_null($info)) {
+    return;
+  }
 
   // SMS default checked ?
   if (isset($info->messages[0]) && $info->messages[0]['value'] == 'sms' || isset($info->messages[1]) && $info->messages[1]['value'] == 'sms') {
