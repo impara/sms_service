@@ -84,7 +84,6 @@ function sms_service_form_user_profile_form_alter(&$form, &$form_state) {
     '#type' => 'checkbox',
     '#return_value' => '1',
     '#default_value' => $sms,
-    '#suffix' => '</div>',
     '#weight' => -2,
   );
 
