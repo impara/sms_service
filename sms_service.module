@@ -79,20 +79,23 @@ function sms_service_form_user_profile_form_alter(&$form, &$form_state) {
 
   // Add sms checkbox.
   $form['alma_user_sms'] = array(
-    '#prefix' => 'Ved at sætte et hak nedenunder acceptere du samtidig vores <a href="/paamindelsesservice" target="_blank">betingelser</a></p>',
+    '#prefix' => '<div class="smsservice">Ved at sætte et hak nedenunder acceptere du samtidig vores <a href="/paamindelsesservice" target="_blank">betingelser</a></p>',
     '#title' => t('SMS Påmindelser, Pris 3kr. pr. stk (Regning overføres automatisk til Lånerstatus.'),
     '#type' => 'checkbox',
     '#return_value' => '1',
     '#default_value' => $sms,
+    '#sufix' => '</div>',
     '#weight' => -2,
   );
 
   // Add email checkbox.
   $form['alma_user_email'] = array(
+    '#prefix' => '<div class="smsservice">',
     '#title' => t('Email Påmindelser, Pris 3kr. pr. stk (Regning overføres automatisk til Lånerstatus.'),
     '#type' => 'checkbox',
     '#return_value' => '1',
     '#default_value' => $email,
+    '#sufix' => '</div>',
     '#weight' => -1,
   );
   // Additional handler to submit changes to alma.
