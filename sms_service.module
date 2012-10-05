@@ -84,7 +84,7 @@ function sms_service_form_user_profile_form_alter(&$form, &$form_state) {
     '#type' => 'checkbox',
     '#return_value' => '1',
     '#default_value' => $sms,
-    '#sufix' => '</div>',
+    '#suffix' => '</div>',
     '#weight' => -2,
   );
 
@@ -95,7 +95,7 @@ function sms_service_form_user_profile_form_alter(&$form, &$form_state) {
     '#type' => 'checkbox',
     '#return_value' => '1',
     '#default_value' => $email,
-    '#sufix' => '</div>',
+    '#suffix' => '</div>',
     '#weight' => -1,
   );
   // Additional handler to submit changes to alma.
