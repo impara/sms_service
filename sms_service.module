@@ -89,7 +89,6 @@ function sms_service_form_user_profile_form_alter(&$form, &$form_state) {
 
   // Add email checkbox.
   $form['alma_user_email'] = array(
-    '#prefix' => '<div class="smsservice">',
     '#title' => t('Email Påmindelser, Pris 3kr. pr. stk (Regning overføres automatisk til Lånerstatus.'),
     '#type' => 'checkbox',
     '#return_value' => '1',
